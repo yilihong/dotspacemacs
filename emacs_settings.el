@@ -192,7 +192,7 @@
 (global-set-key [remap query-replace] 'anzu-query-replace)
 (global-set-key [remap query-replace-regexp] 'anzu-query-replace-regexp)
 
-(setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
+;;(setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
  ;; awesome wikipedia search
  (defun wikipedia-search (search-term)
    "Search for SEARCH-TERM on wikipedia"
@@ -281,12 +281,9 @@
   (setq TeX-source-correlate-method 'synctex)
   (setq TeX-source-correlate-mode t)
   (eval-after-load "tex"
-    '(add-to-list 'TeX-command-list '("latexmk" "latexmk -synctex=1 -shell-escape -pdf %s" TeX-run-TeX nil t :help "Process file with latexmk"))
-    )
-  (eval-after-load "tex"
     '(add-to-list 'TeX-command-list '("xelatexmk" "latexmk -synctex=1 -shell-escape -xelatex %s" TeX-run-TeX nil t :help "Process file with xelatexmk"))
     )
-  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "xelatexmk"))))
 
 (setq TeX-view-program-selection '((output-pdf "PDF Viewer")))
 (setq TeX-view-program-list
