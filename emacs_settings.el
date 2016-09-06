@@ -29,7 +29,7 @@
 (put 'narrow-to-region 'disabled nil)
 (add-hook 'web-mode-hook 'rainbow-mode)  ;; hook rainbow-mode to the html mode as default
 (global-set-key "\C-cg" 'writegood-mode)
-(setq-default git-enable-magit-svn-plugin t)
+;;(setq-default git-enable-magit-svn-plugin t)
 (global-auto-revert-mode t)
 
 (add-to-list 'default-frame-alist '(height . 50))
