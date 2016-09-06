@@ -1,6 +1,6 @@
 #+author: Kevin Hong
 #+STARTUP: indent
-#+title: Emacs Settings
+#+title: Spacemacs User Config
 
 * Premble
 ** Put this in User-config
