@@ -1,4 +1,4 @@
-% Created 2016-09-05 Mon 18:52
+% Created 2016-09-05 Mon 21:57
 \documentclass[11pt]{article}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -19,10 +19,10 @@ linkcolor=blue,anchorcolor=blue,
 citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \author{Kevin Hong}
 \date{\today}
-\title{Emacs Settings}
+\title{Emacs User Config}
 \hypersetup{
  pdfauthor={Kevin Hong},
- pdftitle={Emacs Settings},
+ pdftitle={Emacs User Config},
  pdfkeywords={},
  pdfsubject={},
  pdfcreator={Emacs 24.5.1 (Org mode 8.3.5)},
@@ -38,9 +38,8 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \subsection{Put this in User-config}
 \label{sec:orgheadline1}
 \begin{verbatim}
-(org-babel-load-file "~/Google Drive/_spacemacs/emacs_settings.org")
+;;(org-babel-load-file "~/Google Drive/_spacemacs/emacs_settings.org")
 \end{verbatim}
-
 \section{Essential}
 \label{sec:orgheadline30}
 \subsection{Basic Settings}
@@ -312,7 +311,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
 \subsubsection{Search Web}
 \label{sec:orgheadline27}
 \begin{verbatim}
-(setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
+;;(setq w3m-user-agent "Mozilla/5.0 (Linux; U; Android 2.3.3; zh-tw; HTC_Pyramid Build/GRI40) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.")
  ;; awesome wikipedia search
  (defun wikipedia-search (search-term)
    "Search for SEARCH-TERM on wikipedia"
@@ -405,7 +404,7 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
   :commands (latex-mode LaTeX-mode plain-tex-mode)
   :init
   (progn
-    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    ;;(add-hook 'LaTeX-mode-hook 'visual-line-mode)
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (setq TeX-auto-save t
           TeX-parse-self t
@@ -415,12 +414,9 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue]{hyperref}
   (setq TeX-source-correlate-method 'synctex)
   (setq TeX-source-correlate-mode t)
   (eval-after-load "tex"
-    '(add-to-list 'TeX-command-list '("latexmk" "latexmk -synctex=1 -shell-escape -pdf %s" TeX-run-TeX nil t :help "Process file with latexmk"))
-    )
-  (eval-after-load "tex"
     '(add-to-list 'TeX-command-list '("xelatexmk" "latexmk -synctex=1 -shell-escape -xelatex %s" TeX-run-TeX nil t :help "Process file with xelatexmk"))
     )
-  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "latexmk"))))
+  (add-hook 'TeX-mode-hook '(lambda () (setq TeX-command-default "xelatexmk"))))
 \end{verbatim}
 \subsection{PDF Viewer}
 \label{sec:orgheadline34}

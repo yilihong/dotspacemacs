@@ -1,7 +1,14 @@
 (setq which-key-separator " ") ;; setting which-key
 (setq which-key-max-description-length 20)
-(require 'spaceline-config) ;; setting spaceline
-(spaceline-spacemacs-theme)
+(use-package spaceline-config
+  :ensure spaceline
+  :config
+  (spaceline-spacemacs-theme)
+  (spaceline-helm-mode)
+  ;;(spaceline-toggle-buffer-encoding-abbrev-off)
+)
+;;(require 'spaceline-config) ;; setting spaceline
+;;(spaceline-spacemacs-theme)
 (setq linum-format "%2d ")
 (setq inhibit-splash-screen t
       inhibit-startup-message t
@@ -29,8 +36,16 @@
 (put 'narrow-to-region 'disabled nil)
 (add-hook 'web-mode-hook 'rainbow-mode)  ;; hook rainbow-mode to the html mode as default
 (global-set-key "\C-cg" 'writegood-mode)
-;;(setq-default git-enable-magit-svn-plugin t)
+(setq-default git-enable-magit-svn-plugin t)
 (global-auto-revert-mode t)
+(setq read-file-name-completion-ignore-case t)
+
+(set-language-environment "UTF-8")
+(prefer-coding-system 'utf-8-unix)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-buffer-file-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
 
 (add-to-list 'default-frame-alist '(height . 50))
 (add-to-list 'default-frame-alist '(width . 116))
@@ -56,8 +71,7 @@
   :bind (("C-x f" . helm-for-files)))
 
 (setq scroll-step            1
-        scroll-conservatively  10000)
-;; this sets scroll type, C+l will recenter the buffer.
+      scroll-conservatively  10000)
 
 (defun ask-before-closing ()
   "Ask whether or not to close, and then close if y was pressed"
@@ -139,6 +153,15 @@
     (let ((gitlogo (replace-regexp-in-string "^ Git." "  " vc-mode)))
       (setq vc-mode gitlogo))))
 
+(use-package smart-comment
+  :ensure t
+  :bind ("s-/" . smart-comment))
+
+(use-package avy
+  :ensure t
+  :bind
+  ("M-s" . avy-goto-word-1))
+
 (setq osx-dictionary-dictionary-choice (list "English" "English Thesaurus"))
 (global-set-key (kbd "C-c d") 'osx-dictionary-search-pointer)
 (global-set-key (kbd "C-c i") 'osx-dictionary-search-input)
@@ -167,6 +190,7 @@
   (diminish 'visual-line-mode "")
   (diminish 'hungry-delete-mode)
   (diminish 'golden-ratio-mode)
+  (diminish 'evil-org-mode "eOrg")
   (diminish 'anzu-mode "")
   (diminish 'isearch-mode)
   (diminish 'magic-latex-buffer "")
@@ -250,6 +274,27 @@
 ;;   (end-of-buffer)
 ;;   (dired-next-line -1))
 
+(use-package keyfreq
+  :ensure t
+  :config
+  (setq keyfreq-excluded-commands
+        '(self-insert-command
+          org-self-insert-command
+          delete-backward-char
+          pdf-view-next-page-command
+          yas-expand
+          pdf-view-scroll-up-or-next-page
+          org-delete-backward-char
+          mouse-drag-region
+          LaTeX-insert-left-brace
+          mouse-drag-region
+          newline
+          abort-recursive-edit
+          previous-line
+          next-line))
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
+
 (let ((my-path (expand-file-name "/usr/local/texlive/2015/bin/x86_64-darwin/")))
   (setenv "PATH" (concat my-path ":" (getenv "PATH")))
   (add-to-list 'exec-path my-path))
@@ -271,7 +316,7 @@
   :commands (latex-mode LaTeX-mode plain-tex-mode)
   :init
   (progn
-    (add-hook 'LaTeX-mode-hook 'visual-line-mode)
+    ;;(add-hook 'LaTeX-mode-hook 'visual-line-mode)
     (add-hook 'LaTeX-mode-hook 'LaTeX-math-mode)
     (setq TeX-auto-save t
           TeX-parse-self t
@@ -447,9 +492,11 @@ citecolor=blue,filecolor=blue,menucolor=blue,urlcolor=blue"
                         ".html"))))
 
 (setq org-latex-default-packages-alist
-       (-remove-item
-        '("" "hyperref" nil)
-        org-latex-default-packages-alist))
+                (-remove-item
+                 '("" "hyperref" nil)
+                 org-latex-default-packages-alist))
+(setq initial-major-mode 'org-mode
+              initial-scratch-message "# This buffer is for notes you don't want to save\n\n")
 
 ;; (use-package reftex
 ;;   :commands turn-on-reftex
