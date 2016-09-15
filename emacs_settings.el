@@ -47,7 +47,7 @@
 (set-buffer-file-coding-system 'utf-8)
 (set-default-coding-systems 'utf-8)
 
-(add-to-list 'default-frame-alist '(height . 50))
+(add-to-list 'default-frame-alist '(height . 51))
 (add-to-list 'default-frame-alist '(width . 116))
 (setq-default line-spacing 0.1)
 (setq-default line-height 1.1)
@@ -63,7 +63,7 @@
   (progn
     (require 'helm-config)
     ;; limit max number of matches displayed for speed
-    (setq helm-candidate-number-limit 6)
+    (setq helm-candidate-number-limit 16)
     ;; ignore boring files like .o and .a
     (setq helm-ff-skip-boring-files t)
     ;; replace locate with spotlight on Mac
@@ -334,6 +334,30 @@
 (setq TeX-view-program-list
       '(("PDF Viewer" "/Applications/Skim.app/Contents/SharedSupport/displayline -b %n %o %b")))
 
+(use-package company-math
+  :ensure t)
+
+(use-package company-auctex
+  :ensure t
+  :config (progn
+            (defun company-auctex-labels (command &optional arg &rest ignored)
+              "company-auctex-labels backend"
+              (interactive (list 'interactive))
+              (case command
+                (interactive (company-begin-backend 'company-auctex-labels))
+                (prefix (company-auctex-prefix "\\\\.*ref{\\([^}]*\\)\\="))
+                (candidates (company-auctex-label-candidates arg))))
+
+            (add-to-list 'company-backends
+                         '(company-auctex-macros
+                           company-auctex-environments
+                           company-math-symbols-unicode))
+
+            (add-to-list 'company-backends #'company-auctex-labels)
+            (add-to-list 'company-backends #'company-auctex-bibs)
+            (setq company-math-disallow-unicode-symbols-in-faces nil)))
+
+(require 'helm-bibtex)
 (setq bibtex-autokey-year-length 4
       bibtex-autokey-name-year-separator "-"
       bibtex-autokey-year-title-separator "-"
@@ -342,7 +366,7 @@
       bibtex-autokey-titlewords-stretch 1
       bibtex-autokey-titleword-length 5)
 
-(setq bibtex-completion-bibliography '("~/Google Drive/bibliography/references.bib"))
+(setq bibtex-completion-bibliography '("~/Google Drive/bibliography/references.bib" "~/Google Drive/bibliography/olm.bib" "~/Google Drive/bibliography/kevin.bib"))
 (setq reftex-default-bibliography
       '("~/Google Drive/bibliography/references.bib"))
 
@@ -374,6 +398,28 @@
 
 (setq reftex-cite-prompt-optional-args t)
 (setq reftex-cite-cleanup-optional-args t)
+
+(with-eval-after-load 'helm-bibtex
+  (setcdr (rassoc "https://scholar.google.co.uk/scholar?q=%s"
+                  bibtex-completion-fallback-options)
+          "http://scholar.google.com/scholar?q=%s"))
+
+(require 'helm-bibtex)
+(require 'bibtex-completion)
+(with-eval-after-load 'helm-bibtex
+  (setq bibtex-completion-additional-search-fields '(tags)))
+
+(defun bibtex-completion-my-publications ()
+  "Search BibTeX entries authored by “Yili Hong”."
+  (interactive)
+  (helm :sources '(helm-source-bibtex)
+        :full-frame t
+        :input "Yili Hong"
+        :candidate-number-limit 500))
+
+;; (global-set-key (kbd "C-x p") 'bibtex-completion-my-publications)
+(global-set-key (kbd "C-x p") 'helm-bibtex)
+(global-set-key (kbd "C-x +") 'org-ref-bibtex-new-entry/body)
 
 ;; set key for agenda
 (global-set-key (kbd "C-c a") 'org-agenda)
@@ -436,12 +482,15 @@
 (require 'org-ref)
 (require 'org-ref-pdf)
 (require 'org-ref-url-utils)
-(require 'helm-bibtex)
 (require 'dash)
 (require 'hydra)
 (require 'key-chord)
 (require 'parsebib)
 (require 'async)
+(require 's)
+(require 'f)
+(require 'helm-net)
+(require 'helm-easymenu)
 
 (add-to-list 'org-latex-default-packages-alist '("" "natbib" "") t)
 (add-to-list 'org-latex-default-packages-alist
