@@ -1,3 +1,4 @@
+
 (setq which-key-separator " ") ;; setting which-key
 (setq which-key-max-description-length 20)
 (use-package spaceline-config
