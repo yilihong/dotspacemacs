@@ -53,6 +53,7 @@
   (add-hook 'web-mode-hook 'rainbow-mode)  ;; hook rainbow-mode to the html mode as default
   (global-set-key "\C-cg" 'writegood-mode)
   (setq-default git-enable-magit-svn-plugin t)
+  (global-set-key (kbd "C-x g") 'magit-status)
   (global-auto-revert-mode t)
   (setq read-file-name-completion-ignore-case t)
 #+end_src
