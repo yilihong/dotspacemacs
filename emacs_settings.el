@@ -1,4 +1,3 @@
-
 (setq which-key-separator " ") ;; setting which-key
 (setq which-key-max-description-length 20)
 (use-package spaceline-config
@@ -38,6 +37,7 @@
 (add-hook 'web-mode-hook 'rainbow-mode)  ;; hook rainbow-mode to the html mode as default
 (global-set-key "\C-cg" 'writegood-mode)
 (setq-default git-enable-magit-svn-plugin t)
+(global-set-key (kbd "C-x g") 'magit-status)
 (global-auto-revert-mode t)
 (setq read-file-name-completion-ignore-case t)
 
@@ -359,27 +359,63 @@
             (setq company-math-disallow-unicode-symbols-in-faces nil)))
 
 (require 'helm-bibtex)
-(setq bibtex-autokey-year-length 4
-      bibtex-autokey-name-year-separator "-"
-      bibtex-autokey-year-title-separator "-"
-      bibtex-autokey-titleword-separator "-"
-      bibtex-autokey-titlewords 2
-      bibtex-autokey-titlewords-stretch 1
-      bibtex-autokey-titleword-length 5)
+  (setq bibtex-autokey-year-length 4
+        bibtex-autokey-name-year-separator "-"
+        bibtex-autokey-year-title-separator "-"
+        bibtex-autokey-titleword-separator "-"
+        bibtex-autokey-titlewords 2
+        bibtex-autokey-titlewords-stretch 1
+        bibtex-autokey-titleword-length 5)
 
-(setq bibtex-completion-bibliography '("~/Google Drive/bibliography/references.bib" "~/Google Drive/bibliography/olm.bib" "~/Google Drive/bibliography/kevin.bib"))
-(setq reftex-default-bibliography
-      '("~/Google Drive/bibliography/references.bib"))
+  (setq bibtex-completion-bibliography '("~/Google Drive/bibliography/references.bib" "~/Google Drive/bibliography/olm.bib" "~/Google Drive/bibliography/kevin.bib"))
+  (setq reftex-default-bibliography
+        '("~/Google Drive/bibliography/references.bib"))
 
-(setq reftex-bibpath-environment-variables
-      '("~/Google Drive/bibliography/"))
+  (setq reftex-bibpath-environment-variables
+        '("~/Google Drive/bibliography/"))
 
-(setq reftex-default-bibliography '("~/Google Drive/bibliography/references.bib"))
-(setq reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource"))
+  (setq reftex-default-bibliography '("~/Google Drive/bibliography/references.bib"))
+  (setq reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource"))
 
-(setq reftex-default-bibliography
-      (quote
-       ("user.bib" "local.bib" "main.bib")))
+  (setq reftex-default-bibliography
+        (quote
+         ("user.bib" "local.bib" "main.bib")))
+
+(defun bibtex-completion--get-local-databases ()
+  "Return a list of .bib files associated with the current file."
+  (let ((texfile nil)
+    (cb (current-buffer)))
+    (when (and (boundp 'TeX-master)
+           (stringp TeX-master))
+      (setq texfile (if (file-name-extension TeX-master)
+            TeX-master
+              (concat TeX-master ".tex"))))
+    (with-temp-buffer
+      (if (and texfile (file-readable-p texfile))
+      (insert-file-contents texfile)
+    (insert-buffer-substring cb))
+      (save-match-data
+    (goto-char (point-min))
+    (cond
+     ;; bibtex
+     ((re-search-forward "\\\\\\(?:no\\)*bibliography{\\(.*?\\)}" nil t)
+      (mapcar (lambda (fname)
+            (if (file-name-extension fname)
+            fname
+              (concat fname ".bib")))
+          (split-string (match-string-no-properties 1) ",[ ]*")))
+     ;; biblatex
+     ((re-search-forward "\\\\addbibresource\\(\\[.*?\\]\\)?{\\(.*?\\)}" nil t)
+      (mapcar (lambda (fname)
+            (if (file-name-extension fname)
+            fname
+              (concat fname ".bib")))
+          (let ((option (match-string 1))
+            (file (match-string-no-properties 2)))
+            (unless (and option (string-match-p "location=remote" option))
+              (split-string file ",[ ]*")))))
+     (t
+      bibtex-completion-bibliography))))))
 
 (setq gscholar-bibtex-default-source "Google Scholar")
 (setq gscholar-bibtex-database-file "~/Google Drive/bibliography/references.bib")
